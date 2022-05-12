@@ -1,0 +1,19 @@
+//4. Creo en src la carpeta data y dentro de data creo el fichero movies.json. En este fichero movies.json copio y pego la lista (array) de movies. Ten en cuenta que para que el JSON tenga una sintaxis válida los nombres de las propiedades y los valores deben estar entre comillas dobles.
+
+{
+  "success": true,
+  "movies": [
+    {
+      "id": "1",
+      "title": "Gambito de dama",
+      "gender": "Drama",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPRTbx5ZFAKQYSiCpTb4ePF8bCgz3LuiapWHXBK5482ObKkAs3QQq2AP_sglK5yYHDskE&usqp=CAU"
+    },
+    {
+      "id": "2",
+      "title": "Friends",
+      "gender": "Comedia",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST25yKljSlu6-BhgvZkulkqkCNDiBDYGTXhyBLLatj6nn1NihO-9ZD7oEsvQWdbO788AA&usqp=CAU"
+    },
+  ]
+}
