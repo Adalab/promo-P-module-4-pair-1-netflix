@@ -16,5 +16,6 @@ server.listen(serverPort, () => {
 
 //3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos
 server.get('/movies', (req, res) => {
+  //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas 
   res.json(movies);
 });
