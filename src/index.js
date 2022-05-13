@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 //5. Importo con require el movies.json en src/index.js
-const movies = require('./data/movies.json');
+const movies = require("./data/movies.json");
 
 // create and config server
 const server = express();
@@ -15,7 +15,10 @@ server.listen(serverPort, () => {
 });
 
 //3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos
-server.get('/movies', (req, res) => {
-  //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas 
+server.get("/movies", (req, res) => {
+  //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas
   res.json(movies);
 });
+
+const staticServerPathWeb = "./public"; // En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
