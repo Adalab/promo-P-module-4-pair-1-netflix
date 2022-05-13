@@ -5,13 +5,13 @@
       "id": "1",
       "title": "Gambito de dama",
       "gender": "Drama",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPRTbx5ZFAKQYSiCpTb4ePF8bCgz3LuiapWHXBK5482ObKkAs3QQq2AP_sglK5yYHDskE&usqp=CAU"
+      "image": "//localhost:4000/gambita-de-dama.jpeg"
     },
     {
       "id": "2",
       "title": "Friends",
       "gender": "Comedia",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST25yKljSlu6-BhgvZkulkqkCNDiBDYGTXhyBLLatj6nn1NihO-9ZD7oEsvQWdbO788AA&usqp=CAU"
+      "image": "//localhost:4000/friends.jpeg"
     }
   ]
 }
