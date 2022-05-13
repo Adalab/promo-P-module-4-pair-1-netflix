@@ -25,3 +25,4 @@ server.use(express.static(staticServerPathWeb));//
 
 const staticServerPathImages = "./src/public-movies-images"; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathImages));
+ 
