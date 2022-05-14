@@ -1,8 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 //5. Importo con require el movies.json en src/index.js
-const movies = require("./data/movies.json");
+const dataMovies = require("./data/movies.json");
 const users = require('./data/users.json');
+const { response } = require("express");
 
 // create and config server
 const server = express();
@@ -15,10 +16,19 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
-//3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos
+//3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos. Todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
+  console.log(req.query.gender);
   //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas
-  res.json(movies);
+  //guardamos el valor del query param de género en una constante
+  const genderFilterParam = req.query.gender;
+
+  //Respondemos con el listado filtrado.
+  res.json({
+    success: true,
+    movies: dataMovies.movies
+      .filter((item) => item.gender.includes(genderFilterParam))
+  });
 });
 
 server.post("/login", (req, res) => {
