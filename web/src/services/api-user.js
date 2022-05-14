@@ -2,30 +2,25 @@
 
 const sendLoginToApi = data => {
   console.log('Se están enviando datos al login:', data);
-  // 1. CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
+  // 1. Cambio este fetch para que apunte a un endpoint de mi servidor, con la ruta buena de login.
   return fetch('http://localhost:4000/login', {
+  //2. Cambio el fetch para que use el verbo POST.
     method: 'POST',
-    body: JSON.stringify(data),
+  //3. Añado al fetch los datos de email y password sacados de data para que se envien como body params.
+    body: JSON.stringify({
+      email: data.email,
+      password: data.password,
+    }),
     headers: {
       'Content-Type': 'application/json',
     },
   })
 
-    .then(response => response.json())
-    .then(() => {
-      // CAMBIA EL CONTENIDO DE ESTE THEN PARA GESTIONAR LA RESPUESTA DEL SERVIDOR Y RETORNAR AL COMPONENTE APP LO QUE NECESITA
-      if (data.email.includes('gmail')) {
-        return {
-          success: true,
-          userId: '123'
-        };
-      } else {
-        return {
-          success: false,
-          errorMessage: 'Usuario no encontrado'
-        };
-      }
-    });
+  .then((response) => response.json())
+  .then((data) => {
+    return data;
+  //4. Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
+  });
 };
 
 // signup
