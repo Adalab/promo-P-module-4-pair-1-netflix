@@ -43,12 +43,11 @@ server.get("/movies", (req, res) => {
 server.post("/login", (req, res) => {
   let exist = users.find((user) => {
     if (user.email === req.body.email && user.password === req.body.password) {
-      //console.log(user);
       return user;
     }
     return null;
   });
-  //console.log(exist);
+
   if (!exist) {
     return res.status(404).json({
       success: false,
