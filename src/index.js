@@ -64,8 +64,15 @@ server.post("/login", (req, res) => {
 server.get('/movie/:movieId', (req, res) => {
   //console.log('URL params:', req.params);
   const foundMovie = dataMovies.movies.find((movie) => movie.id === req.params.movieId);
-  console.log(foundMovie);
+  //console.log(foundMovie);
+  res.render('movie', foundMovie);
  });
+
+ //configura el motor de plantillas añadiendo la línea
+ server.set('view engine', 'ejs');
+
+
+
 
 const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos//
 server.use(express.static(staticServerPathWeb));//
