@@ -60,8 +60,10 @@ server.post("/login", (req, res) => {
   });
 });
 
+//4.4.1 Para crear un motor de plantillas, 1. antes tenemos que crear un endpoint para escuchar las peticiones:
 server.get('/movie/:movieId', (req, res) => {
-  console.log(1);
+  console.log('URL params:', req.params);
+  //const foundMovie = movies.find((movie) => movie.id === req.params.movieId);
  });
 
 const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos//
