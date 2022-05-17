@@ -4,9 +4,21 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Netflix</title>
+    <title><%=title%></title>
   </head>
   <body>
-    <h1>Holi Mundo</h1>
+    <div class="div">
+      <section class="section">
+          <img class="section__img" src="<%=image %>" alt="Carátula de
+      <%=title%>" />
+          <div>
+              <h3 class="section__title">
+                  <%=title%>
+              </h3>
+              <p class="section__gender">Género: <%=gender%>
+              </p>
+              <a href="../" class="section__back">Volver al listado</a>
+      </section>
+  </div>
   </body>
 </html>
