@@ -3,6 +3,7 @@ const cors = require("cors");
 //5. Importo con require el movies.json en src/index.js
 const dataMovies = require("./data/movies.json");
 const users = require('./data/users.json');
+const Database = require('better-sqlite3');
 const { response } = require("express");
 const { process_params } = require("express/lib/router");
 
@@ -16,6 +17,10 @@ const serverPort = 4000;
 server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
+
+//4.5. Configuramos la base de datos en Node JS
+const db = Database('./src/data/database.db', { verbose: console.log });
+
 
 //3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos. Todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
