@@ -18,31 +18,40 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
+//configura el motor de plantillas añadiendo la línea
+server.set('view engine', 'ejs');
+
 //4.5. Configuramos la base de datos en Node JS
 const db = Database('./src/data/database.db', { verbose: console.log });
 
-
+//4.5 Hacemos un SELECT para obtener todas las pelínculas
 //3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos. Todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
+  const query = db.prepare('SELECT * FROM movies');
+  const movies = query.all();
+  console.log(movies);
+  res.json(movies);
+});
   //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas
   //guardamos el valor del query param de género en una constante
-  const genderFilterParam = req.query.gender;
 
-  //Respondemos con el listado filtrado.
-  res.json({
-    success: true,
-    movies: dataMovies.movies
-      .filter((item) => item.gender.includes(genderFilterParam))
-      .sort(function (a, z) {
-        const sortFilterParam = a.title.localeCompare(z.title);
-        if (req.query.sort === 'asc') {
-          return sortFilterParam;
-        } else {
-          return sortFilterParam * -1;
-        }
-      }),
-  });
-});
+//   const genderFilterParam = req.query.gender;
+
+//   //Respondemos con el listado filtrado.
+//   res.json({
+//     success: true,
+//     movies: dataMovies.movies
+//       .filter((item) => item.gender.includes(genderFilterParam))
+//       .sort(function (a, z) {
+//         const sortFilterParam = a.title.localeCompare(z.title);
+//         if (req.query.sort === 'asc') {
+//           return sortFilterParam;
+//         } else {
+//           return sortFilterParam * -1;
+//         }
+//       }),
+//   });
+// });
 
 
 server.post("/login", (req, res) => {
@@ -73,8 +82,7 @@ server.get('/movie/:movieId', (req, res) => {
   res.render('movie', foundMovie);
  });
 
- //configura el motor de plantillas añadiendo la línea
- server.set('view engine', 'ejs');
+ 
 
 
 
