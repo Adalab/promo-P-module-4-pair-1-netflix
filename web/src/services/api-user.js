@@ -24,7 +24,7 @@ const sendLoginToApi = data => {
   });
 };
 
-// signup
+// signupi
 
 const sendSingUpToApi = data => {
   console.log('Se están enviando datos al signup:', data);

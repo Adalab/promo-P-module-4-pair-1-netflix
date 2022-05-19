@@ -3,7 +3,7 @@ const cors = require("cors");
 
 //Importamos datos 
 const dataMovies = require("./data/movies.json");
-//const users = require('./data/users.json');
+const users = require('./data/users.json');
 
 //Importamos el modulo better-sqlite3 
 const Database = require('better-sqlite3');
@@ -27,6 +27,7 @@ server.set('view engine', 'ejs');
 
 //Configuramos la BASE DE DATOS en Node JS
 const db = Database('./src/data/database.db', { verbose: console.log });
+const dbusers = Database('./src/data/datausers.db', { verbose: console.log });
 
 //Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
@@ -74,29 +75,27 @@ server.get("/movies", (req, res) => {
 // });
 
 //Ahora la cogeremos desde la base de datos (previa creación de la tabla de las usuarias) con un SELECT.
-// server.post('/login', (req, res) => {
-//   console.log('login');
-//   const emailFind = req.body.email;
-//   const passwordFind = req.body.password;
-//   const query = db.prepare(
-//     //`SELECT * FROM users WHERE email = ? AND password = ?`
-//     `SELECT * FROM users WHERE email=${req.body.email} password=${req.body.password}`
-//   );
-//   const exist = query.get(emailFind, passwordFind);
+server.post('/login', (req, res) => {
+  const emailFind = req.body.email;
+  const passwordFind = req.body.password;
+  const query = dbusers.prepare(
+    `SELECT * FROM users WHERE email = ? AND password = ?`
+  );
+  const exist = query.get(emailFind, passwordFind);
 
-//   if (exist !== undefined) {
-//     return res.status(200).json({
-//       success: true,
-//       userId: exist.id,
-//     });
-//   } else {
-//     console.log('Error fatal');
-//     return res.status(404).json({
-//       success: false,
-//       errorMessage: 'Usuaria/o no encontrada/o',
-//     });
-//   }
-// });
+  if (exist !== undefined) {
+    return res.status(200).json({
+      success: true,
+      userId: exist.id,
+    });
+  } else {
+    console.log('Error fatal');
+    return res.status(404).json({
+      success: false,
+      errorMessage: 'Usuaria/o no encontrada/o',
+    });
+  }
+});
 
 
 //En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
