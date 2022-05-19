@@ -1,13 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-//5. Importo con require el movies.json en src/index.js
-//const dataMovies = require("./data/movies.json");
+
+//Importamos datos 
+const dataMovies = require("./data/movies.json");
 const users = require('./data/users.json');
+
+//Importamos el modulo better-sqlite3 
 const Database = require('better-sqlite3');
+
 const { response } = require("express");
 const { process_params } = require("express/lib/router");
 
-// create and config server
+// Create and config server
 const server = express();
 server.use(cors());
 server.use(express.json());
@@ -18,45 +22,37 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
-//configura el motor de plantillas añadiendo la línea
+//Configuramos el motor de plantillas añadiendo la línea
 server.set('view engine', 'ejs');
 
-//4.5. Configuramos la base de datos en Node JS
+//Configuramos la BASE DE DATOS en Node JS
 const db = Database('./src/data/database.db', { verbose: console.log });
 
-//4.5 Hacemos un SELECT para obtener todas las pelínculas
-//3. Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front y a contnuación responde a la petición con los datos. Todo ello para obtener las peliculas 
+//Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
+  const genderFilterParam = req.query.gender;
+  //const sortFilterParam = a.title.localeCompare(z.title);
+
   const query = db.prepare('SELECT * FROM movies');
   const movies = query.all();
   console.log(movies);
   return res.json({
     success: true,
     movies: movies
+    .filter((item) => item.gender.includes(genderFilterParam))
+      .sort(function (a, z) {
+        const sortFilterParam = a.title.localeCompare(z.title);
+        if (req.query.sort === 'asc') {
+          return sortFilterParam;
+        } else {
+          return sortFilterParam * -1;
+        }
+      }),
   });
 });
-  //6. como ya lo tengo importado, dentro de este endpoint que he creado en el punto 3, me retorno las peliculas
-  //guardamos el valor del query param de género en una constante
-
-  // const genderFilterParam = req.query.gender;
-
-  // //Respondemos con el listado filtrado.
-  // res.json({
-  //   success: true,
-  //   movies: dataMovies.movies
-  //     .filter((item) => item.gender.includes(genderFilterParam))
-  //     .sort(function (a, z) {
-  //       const sortFilterParam = a.title.localeCompare(z.title);
-  //       if (req.query.sort === 'asc') {
-  //         return sortFilterParam;
-  //       } else {
-  //         return sortFilterParam * -1;
-  //       }
-  //     }),
-  // });
-
-
-
+  
+  
+//ENDPOINT de las usuarias
 server.post("/login", (req, res) => {
   let exist = users.find((user) => {
     if (user.email === req.body.email && user.password === req.body.password) {
@@ -77,7 +73,7 @@ server.post("/login", (req, res) => {
   });
 });
 
-//4.4.1 Para crear un motor de plantillas, 1. antes tenemos que crear un endpoint para escuchar las peticiones:
+//Para crear el motor de plantillas, antes tenemos que crear un endpoint para escuchar las peticiones:
 server.get('/movie/:movieId', (req, res) => {
   //console.log('URL params:', req.params);
   const foundMovie = dataMovies.movies.find((movie) => movie.id === req.params.movieId);
@@ -89,12 +85,14 @@ server.get('/movie/:movieId', (req, res) => {
 
 
 
-
+//Configuramos el servidor de estáticos de Express
 const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos//
 server.use(express.static(staticServerPathWeb));//
 
+//Configuramos el servidor de estáticos para las fotos
 const staticServerPathImages = "./src/public-movies-images"; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathImages));
- 
+
+//Configuramos el servidor de estáticos para los estilos
 const staticServerStyles = './src/public-css';
 server.use(express.static(staticServerStyles));
