@@ -73,16 +73,27 @@ server.post("/login", (req, res) => {
   });
 });
 
-//Para crear el motor de plantillas, antes tenemos que crear un endpoint para escuchar las peticiones:
+//En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
+// server.get('/movie/:movieId', (req, res) => {
+//   //console.log('URL params:', req.params);
+//   const foundMovie = dataMovies.movies.find((movie) => movie.id === req.params.movieId);
+//   //console.log(foundMovie);
+//   res.render('movie', foundMovie);
+//  });
+
+//AHORA, el MOTOR DE PLANTILLAS, debe obtener los datos de la BASE DE DATOS tambien.
 server.get('/movie/:movieId', (req, res) => {
-  //console.log('URL params:', req.params);
-  const foundMovie = dataMovies.movies.find((movie) => movie.id === req.params.movieId);
-  //console.log(foundMovie);
-  res.render('movie', foundMovie);
- });
-
- 
-
+  const query = db.prepare(
+    `SELECT  * FROM movies WHERE id=${req.params.movieId}`
+  );
+  const foundMovie = query.get();
+  if (foundMovie) {
+    res.render('movie', foundMovie);
+  } else {
+    const error = { error: req.url };
+    res.render('movie-not-found', error);
+  }
+});
 
 
 //Configuramos el servidor de estáticos de Express
