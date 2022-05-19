@@ -2,9 +2,10 @@
 
 const sendLoginToApi = data => {
   console.log('Se están enviando datos al login:', data);
+  //Creamos body params
   //Cambio este fetch para que apunte a un endpoint de mi servidor, con la ruta buena de login.
   return fetch('http://localhost:4000/login', {
-  //Cambio el fetch para que use el verbo POST.
+  //Cambio el fetch para que use el verbo/metodo POST.
     method: 'POST',
   //Añado al fetch los datos de email y password sacados de data para que se envien como body params.
     body: JSON.stringify({
@@ -19,7 +20,7 @@ const sendLoginToApi = data => {
   .then((response) => response.json())
   .then((data) => {
     return data;
-  //Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
+    //Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
   });
 };
 
@@ -27,18 +28,22 @@ const sendLoginToApi = data => {
 
 const sendSingUpToApi = data => {
   console.log('Se están enviando datos al signup:', data);
-  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
+  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR
   return fetch('http://localhost:4000/signup', {
+  //Cambio el fetch para que use el verbo/metodo POST.  
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({
+      email: data.email,
+      password: data.password,
+    }),
   })
     .then(response => response.json())
     .then(() => {
-      // CAMBIA EL CONTENIDO DE ESTE THEN PARA GESTIONAR LA RESPUESTA DEL SERVIDOR Y RETORNAR AL COMPONENTE APP LO QUE NECESITA
       return data;
+      //Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
     });
 };
 
