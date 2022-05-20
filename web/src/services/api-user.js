@@ -24,27 +24,29 @@ const sendLoginToApi = data => {
   });
 };
 
-// signupi
+// signup
 
 const sendSingUpToApi = data => {
   console.log('Se están enviando datos al signup:', data);
   // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR
   return fetch('http://localhost:4000/signup', {
-  //Cambio el fetch para que use el verbo/metodo POST.  
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+  //Cambio el fetch para que use el verbo/metodo POST.
+  method: 'POST',
+  //Añado al fetch los datos de email y password sacados de data para que se envien como body params.
     body: JSON.stringify({
       email: data.email,
       password: data.password,
     }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
-    .then(response => response.json())
-    .then(() => {
-      return data;
-      //Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
-    });
+
+  .then((response) => response.json())
+  .then((data) => {
+    return data;
+    //Borro el contenido del segundo then para que me retorne los datos introducidos en data, es decir, email y password, para pasarselo a React.
+  });
 };
 
 // profile

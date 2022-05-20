@@ -10,6 +10,8 @@ const Database = require('better-sqlite3');
 
 const { response } = require("express");
 const { process_params } = require("express/lib/router");
+const req = require("express/lib/request");
+const res = require("express/lib/response");
 
 // Create and config server
 const server = express();
@@ -97,6 +99,51 @@ server.post('/login', (req, res) => {
   }
 });
 
+//Registramos nuevas usuarias en Back y Comprobamos que no hay una usuaria registrada con el mismo email.
+server.post('/signup', (req, res) => {
+  const email = dbusers.prepare(`SELECT email FROM users WHERE email=?`);
+  const foundUser = email.get(req.body.email);
+
+  //Comprobamos si el email ya existe en nuestra db
+  if (foundUser === undefined) {
+    const query = dbusers.prepare(`INSERT INTO users (email, password) VALUES (?, ?)`);
+    const result = query.run(req.body.email, req.body.password);
+    res.json({
+      success: true,
+      errorMessage: 'Su usuario/a ha sido registrado/a con éxito',
+    });
+  } else {
+    res.json({
+      success: false,
+      errorMessage: 'Lo sentimos, usuario/a ya registrado/a.',
+    });
+  }
+});
+  
+
+
+// server.post('/signup', (req, res) => {
+//   const newEmail = req.body.email;
+//   const newPassword = req.body.password;
+//   const query = dbusers.prepare('SELECT * FROM users WHERE email = ?');
+//   const emailExist = query.get(newEmail);
+//   if (emailExist !== undefined) {
+//     res.json({
+//       success: false,
+//       errorMessage: 'Lo sentimos, usuario/a ya registrado/a.',
+//     });
+//   } else {
+//     const query = dbusers.prepare(
+//       `INSERT INTO users (email, password) VALUES (?, ?) `
+//     );
+//     const newUser = query.run(newEmail, newPassword);
+//     res.json({
+//       success: true,
+//       msj: 'Su usuario/a ha sido registrado/a con éxito',
+//       userId: newUser.lastInsertRowid,
+//     });
+//   }
+// });
 
 //En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
 // server.get('/movie/:movieId', (req, res) => {
