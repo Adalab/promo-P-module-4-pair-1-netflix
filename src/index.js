@@ -111,6 +111,7 @@ server.post('/signup', (req, res) => {
     res.json({
       success: true,
       errorMessage: 'Su usuario/a ha sido registrado/a con éxito',
+      userId: result.lastInsertRowid,
     });
   } else {
     res.json({
