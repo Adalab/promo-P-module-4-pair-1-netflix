@@ -123,6 +123,15 @@ server.post('/signup', (req, res) => {
 });
 
 server.get('/user/movies', (req, res) => {
+    // Preparamos la query para obtener los movieIds
+    const movieIdsQuery = dbrelmovusers.prepare(
+      'SELECT movieId FROM rel_movies_users WHERE userId = ?'
+    );
+    // Obtenemos el id de la usuaria 
+  const userId = req.header('user-id');
+    // Ejecutamos la query y os devuelve algo como [{ movieId: 1 }, { movieId: 2 }];
+  const movieIds = movieIdsQuery.all(userId); 
+  console.log(movieIds);
   res.json({
     success: true,
     movies: movies,
