@@ -122,6 +122,7 @@ server.post('/signup', (req, res) => {
   }
 });
 
+// Endpoint id de las películas de una usuaria
 server.get('/user/movies', (req, res) => {
     // Preparamos la query para obtener los movieIds
     const movieIdsQuery = dbrelmovusers.prepare(
@@ -132,6 +133,19 @@ server.get('/user/movies', (req, res) => {
     // Ejecutamos la query y os devuelve algo como [{ movieId: 1 }, { movieId: 2 }];
   const movieIds = movieIdsQuery.all(userId); 
   console.log(movieIds);
+
+  //Obtenemos las interrogaciones separadas por comas
+  const moviesIdsQuestions = movieIds.map((id) => '?').join(', '); // Que nos devuelve '?, ?'
+  //Preparamos la segunda query para obtener todos los datos de las peliculas
+  const moviesQuery = dbrelmovusers.prepare(
+    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
+  );
+  //Convertimos el array de objetos de id anterior a un array de numeros que nos devuelve asi [1.0, 2.0]
+  const moviesIdsNumbers = movieIds.map((movie) => movie.movieId);
+  //Ejecutamos la segunda query
+  const movies = moviesQuery.all(moviesIdsNumbers);
+
+  //Respondemos a la peticion de la siguiente manera: 
   res.json({
     success: true,
     movies: movies,
