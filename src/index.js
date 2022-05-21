@@ -27,9 +27,10 @@ server.listen(serverPort, () => {
 //Configuramos el motor de plantillas añadiendo la línea
 server.set('view engine', 'ejs');
 
-//Configuramos la BASE DE DATOS en Node JS
+//Configuramos las BASE DE DATOS en Node JS
 const db = Database('./src/data/database.db', { verbose: console.log });
 const dbusers = Database('./src/data/datausers.db', { verbose: console.log });
+const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: console.log });
 
 //Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
@@ -120,7 +121,13 @@ server.post('/signup', (req, res) => {
     });
   }
 });
-  
+
+server.get('/user/movies', (req, res) => {
+  res.json({
+    success: true,
+    movies: movies,
+  });
+});
 
 //En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
 // server.get('/movie/:movieId', (req, res) => {
