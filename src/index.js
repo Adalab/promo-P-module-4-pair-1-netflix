@@ -122,30 +122,6 @@ server.post('/signup', (req, res) => {
 });
   
 
-
-// server.post('/signup', (req, res) => {
-//   const newEmail = req.body.email;
-//   const newPassword = req.body.password;
-//   const query = dbusers.prepare('SELECT * FROM users WHERE email = ?');
-//   const emailExist = query.get(newEmail);
-//   if (emailExist !== undefined) {
-//     res.json({
-//       success: false,
-//       errorMessage: 'Lo sentimos, usuario/a ya registrado/a.',
-//     });
-//   } else {
-//     const query = dbusers.prepare(
-//       `INSERT INTO users (email, password) VALUES (?, ?) `
-//     );
-//     const newUser = query.run(newEmail, newPassword);
-//     res.json({
-//       success: true,
-//       msj: 'Su usuario/a ha sido registrado/a con éxito',
-//       userId: newUser.lastInsertRowid,
-//     });
-//   }
-// });
-
 //En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
 // server.get('/movie/:movieId', (req, res) => {
 //   //console.log('URL params:', req.params);
