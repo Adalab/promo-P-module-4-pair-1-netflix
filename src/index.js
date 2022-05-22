@@ -27,9 +27,7 @@ server.listen(serverPort, () => {
 });
 
 //Configuramos las BASE DE DATOS en Node JS (Aunque lo correcto sería una base de datos con 3 tablas).
-const dbmovies = Database('./src/data/database.db', { verbose: console.log });
-const dbusers = Database('./src/data/datausers.db', { verbose: console.log });
-const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: console.log });
+const db = Database('./src/data/database.db', { verbose: console.log });
 
 
 
@@ -45,14 +43,14 @@ server.get("/movies", (req, res) => {
 
   if (genderFilterParam === '') {
     //Preparamos la query
-    const query = dbmovies.prepare (`SELECT * FROM movies ORDER BY title ${sortFilterParam}`);
+    const query = db.prepare (`SELECT * FROM movies ORDER BY title ${sortFilterParam}`);
 
     //Ejecutamos la query
     moviesList = query.all();
 
   } else {
     //Preparamos de nuevo la query
-    const query = dbmovies.prepare (`SELECT * FROM movies WHERE gender=? ORDER BY title ${sortFilterParam}`);
+    const query = db.prepare (`SELECT * FROM movies WHERE gender=? ORDER BY title ${sortFilterParam}`);
 
     //Ejecutamos de nuevo la query
     moviesList = query.all(genderFilterParam)
@@ -72,7 +70,7 @@ server.post('/login', (req,res) => {
   const emailFind = req.body.email;
   const passwordFind = req.body.password;
 
-  const query = dbusers.prepare(`SELECT * FROM users WHERE email = ? AND password =?`);
+  const query = db.prepare(`SELECT * FROM users WHERE email = ? AND password =?`);
 
   const loggedUser = query.get(emailFind, passwordFind);
 
@@ -93,12 +91,12 @@ server.post('/login', (req,res) => {
 
 //ENDPOINT USUARIAS(signup): Registramos nuevas usuarias en Back y Comprobamos que no hay una usuaria registrada con el mismo email.
 server.post('/signup', (req, res) => {
-  const email = dbusers.prepare(`SELECT email FROM users WHERE email=?`);
+  const email = db.prepare(`SELECT email FROM users WHERE email=?`);
   const foundUser = email.get(req.body.email);
 
   //Comprobamos si el email ya existe en nuestra db
   if (foundUser === undefined) {
-    const query = dbusers.prepare(`INSERT INTO users (email, password) VALUES (?, ?)`);
+    const query = db.prepare(`INSERT INTO users (email, password) VALUES (?, ?)`);
     const result = query.run(req.body.email, req.body.password);
     res.json({
       success: true,
@@ -117,7 +115,7 @@ server.post('/signup', (req, res) => {
 server.get('/user/movies', (req, res) => {
 
     // Preparamos la query para obtener los movieIds
-    const movieIdsQuery = dbrelmovusers.prepare(
+    const movieIdsQuery = db.prepare(
       'SELECT movieId FROM rel_movies_users WHERE userId = ?');
 
     // Obtenemos el id de la usuaria 
@@ -130,7 +128,7 @@ server.get('/user/movies', (req, res) => {
   const moviesIdsQuestions = movieIds.map((id) => '?').join(', '); // Que nos devuelve '?, ?'
 
   //Preparamos la segunda query para obtener todos los datos de las peliculas
-  const moviesQuery = dbmovies.prepare(
+  const moviesQuery = db.prepare(
     `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`);
 
   //Convertimos el array de objetos de id anterior a un array de numeros que nos devuelve asi [1.0, 2.0]
