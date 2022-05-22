@@ -28,7 +28,7 @@ server.listen(serverPort, () => {
 server.set('view engine', 'ejs');
 
 //Configuramos las BASE DE DATOS en Node JS
-const db = Database('./src/data/database.db', { verbose: console.log });
+const dbmovies = Database('./src/data/database.db', { verbose: console.log });
 const dbusers = Database('./src/data/datausers.db', { verbose: console.log });
 const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: console.log });
 
@@ -37,7 +37,7 @@ server.get("/movies", (req, res) => {
   const genderFilterParam = req.query.gender;
   //const sortFilterParam = a.title.localeCompare(z.title);
 
-  const query = db.prepare('SELECT * FROM movies');
+  const query = dbmovies.prepare('SELECT * FROM movies');
   const movies = query.all();
   console.log(movies);
   return res.json({
@@ -100,6 +100,7 @@ server.post('/login', (req, res) => {
   }
 });
 
+
 //Registramos nuevas usuarias en Back y Comprobamos que no hay una usuaria registrada con el mismo email.
 server.post('/signup', (req, res) => {
   const email = dbusers.prepare(`SELECT email FROM users WHERE email=?`);
@@ -122,7 +123,7 @@ server.post('/signup', (req, res) => {
   }
 });
 
-// Endpoint id de las películas de una usuaria
+// Endpoint con el id de las películas de una usuaria
 server.get('/user/movies', (req, res) => {
     // Preparamos la query para obtener los movieIds
     const movieIdsQuery = dbrelmovusers.prepare(
@@ -137,7 +138,7 @@ server.get('/user/movies', (req, res) => {
   //Obtenemos las interrogaciones separadas por comas
   const moviesIdsQuestions = movieIds.map((id) => '?').join(', '); // Que nos devuelve '?, ?'
   //Preparamos la segunda query para obtener todos los datos de las peliculas
-  const moviesQuery = dbrelmovusers.prepare(
+  const moviesQuery = dbmovies.prepare(
     `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
   );
   //Convertimos el array de objetos de id anterior a un array de numeros que nos devuelve asi [1.0, 2.0]
