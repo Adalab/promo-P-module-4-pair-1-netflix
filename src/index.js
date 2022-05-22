@@ -1,22 +1,24 @@
-const express = require("express");
-const cors = require("cors");
-
-//Importamos datos 
-const dataMovies = require("./data/movies.json");
-const users = require('./data/users.json');
-
-//Importamos el modulo better-sqlite3 
-const Database = require('better-sqlite3');
-
 const { response } = require("express");
 const { process_params } = require("express/lib/router");
 const req = require("express/lib/request");
 const res = require("express/lib/response");
 
-// Create and config server
+//Importamos módulos
+const express = require("express");
+const cors = require("cors");
+const Database = require('better-sqlite3');
+
+//Creamos y configuramos el servidor
 const server = express();
 server.use(cors());
 server.use(express.json());
+
+//Configuramos el motor de plantillas 
+server.set('view engine', 'ejs');
+
+//Importamos datos 
+const dataMovies = require("./data/movies.json");
+const users = require('./data/users.json');
 
 // init express aplication
 const serverPort = 4000;
@@ -24,36 +26,62 @@ server.listen(serverPort, () => {
   console.log(`Server listening at http://localhost:${serverPort}`);
 });
 
-//Configuramos el motor de plantillas añadiendo la línea
-server.set('view engine', 'ejs');
-
-//Configuramos las BASE DE DATOS en Node JS
+//Configuramos las BASE DE DATOS en Node JS (Aunque lo correcto sería una base de datos con 3 tablas).
 const dbmovies = Database('./src/data/database.db', { verbose: console.log });
 const dbusers = Database('./src/data/datausers.db', { verbose: console.log });
 const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: console.log });
 
-//Creamos un ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
-server.get("/movies", (req, res) => {
-  const genderFilterParam = req.query.gender;
-  //const sortFilterParam = a.title.localeCompare(z.title);
 
-  const query = dbmovies.prepare('SELECT * FROM movies');
-  const movies = query.all();
-  console.log(movies);
-  return res.json({
+
+//ENDPOINTS
+
+//ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
+server.get("/movies", (req, res) => {
+  const genderFilterParam = req.query.gender ||'';
+  const sortFilterParam = req.query.sort || 'asc';
+
+  let moviesList = [];
+
+  if (genderFilterParam === '') {
+    //Preparamos la query
+    const query = dbmovies.prepare (
+      `SELECT * FROM movies ORDER BY title ${sortFilterParam}`);
+    //Ejecutamos la query
+    moviesList = query.all();
+  } else {
+    //Preparamos de nuevo la query
+    const query = dbmovies.prepare (`SELECT * FROM movies WHERE gender=? ORDER BY title ${sortFilterParam}`);
+    //Ejecutamos de nuevo la query
+    moviesList = query.all(genderFilterParam)
+  }
+
+  //Respondemos a la peticion anterior con los datos devueltos por la base de datos
+  const response = {
     success: true,
-    movies: movies
-    .filter((item) => item.gender.includes(genderFilterParam))
-      .sort(function (a, z) {
-        const sortFilterParam = a.title.localeCompare(z.title);
-        if (req.query.sort === 'asc') {
-          return sortFilterParam;
-        } else {
-          return sortFilterParam * -1;
-        }
-      }),
-  });
+    movies: moviesList,
+  };
+  res.json(response);
 });
+  
+
+
+//   const query = dbmovies.prepare('SELECT * FROM movies');
+//   const movies = query.all();
+//   console.log(movies);
+//   return res.json({
+//     success: true,
+//     movies: movies
+//     .filter((item) => item.gender.includes(genderFilterParam))
+//       .sort(function (a, z) {
+//         const sortFilterParam = a.title.localeCompare(z.title);
+//         if (req.query.sort === 'asc') {
+//           return sortFilterParam;
+//         } else {
+//           return sortFilterParam * -1;
+//         }
+//       }),
+//   });
+// });
   
   
 //ENDPOINT de las usuarias (de donde cogemos al inicio la info de las usuarias)
@@ -176,14 +204,18 @@ server.get('/movie/:movieId', (req, res) => {
 });
 
 
-//Configuramos el servidor de estáticos de Express
+
+
+//SERVIDORES DE ESTÁTICOS
+
+//Configuramos el servidor de estáticos de EXPRESS
 const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos//
 server.use(express.static(staticServerPathWeb));//
 
-//Configuramos el servidor de estáticos para las fotos
+//Configuramos el servidor de estáticos para las FOTOS
 const staticServerPathImages = "./src/public-movies-images"; // En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathImages));
 
-//Configuramos el servidor de estáticos para los estilos
+//Configuramos el servidor de estáticos para los ESTILOS
 const staticServerStyles = './src/public-css';
 server.use(express.static(staticServerStyles));
