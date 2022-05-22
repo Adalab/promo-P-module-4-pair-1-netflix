@@ -1,4 +1,4 @@
-// login
+// login (acceso de la usuaria)
 
 const sendLoginToApi = data => {
   console.log('Se están enviando datos al login:', data);
@@ -24,13 +24,15 @@ const sendLoginToApi = data => {
   });
 };
 
-// signup
+
+
+// signup (registrar a la usuaria)
 
 const sendSingUpToApi = data => {
   console.log('Se están enviando datos al signup:', data);
-  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR
+  //Cambio este fetch para que apunte a un endpoint de mi servidor.
   return fetch('http://localhost:4000/signup', {
-  //Cambio el fetch para que use el verbo/metodo POST.
+  //Cambio el fetch para que use el verbo/metodo POST (crea nuevos datos en el servidor).
   method: 'POST',
   //Añado al fetch los datos de email y password sacados de data para que se envien como body params.
     body: JSON.stringify({
@@ -49,7 +51,9 @@ const sendSingUpToApi = data => {
   });
 };
 
-// profile
+
+
+// profile (perfil de la usuaria) -> ESTE PUNTO NO SE HA TOCADO. 
 
 const sendProfileToApi = (userId, data) => {
   console.log('Se están enviando datos al profile:', userId, data);
@@ -73,15 +77,16 @@ const getProfileFromApi = userId => {
     });
 };
 
+
+
 // user movies
 
 const getUserMoviesFromApi = userId => {
   console.log('Se están pidiendo datos de las películas de la usuaria:', userId);
-  // CAMBIA ESTE FETCH PARA QUE APUNTE A UN ENDPOINT DE TU SERVIDOR, PIENSA SI DEBE SER GET O POST, PIENSA QUÉ DATOS DEBES ENVIAR, ETC
+  //Cambio este fetch para que apunte a un endpoint de mi servidor.
   return fetch('//localhost:4000/user/movies', {
-    // Método GET
+    //Cambio el fetch para que use el verbo/metodo GET (pide datos al servidor).
     method: 'GET',
-    // Header params
     headers: {
       'Content-Type': 'application/json',
       'user-id': userId,

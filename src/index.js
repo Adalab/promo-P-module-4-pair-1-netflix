@@ -33,6 +33,7 @@ const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: conso
 
 
 
+
 //ENDPOINTS
 
 //ENDPOINT PELICULAS: para escuchar las peticiones que hemos programado en el front todo ello para obtener las peliculas 
@@ -44,13 +45,15 @@ server.get("/movies", (req, res) => {
 
   if (genderFilterParam === '') {
     //Preparamos la query
-    const query = dbmovies.prepare (
-      `SELECT * FROM movies ORDER BY title ${sortFilterParam}`);
+    const query = dbmovies.prepare (`SELECT * FROM movies ORDER BY title ${sortFilterParam}`);
+
     //Ejecutamos la query
     moviesList = query.all();
+
   } else {
     //Preparamos de nuevo la query
     const query = dbmovies.prepare (`SELECT * FROM movies WHERE gender=? ORDER BY title ${sortFilterParam}`);
+
     //Ejecutamos de nuevo la query
     moviesList = query.all(genderFilterParam)
   }
@@ -110,26 +113,29 @@ server.post('/signup', (req, res) => {
   }
 });
 
-//ENDPOINT USUARIAS Y PELICULAS: con el id de las películas de una usuaria
+//ENDPOINT USUARIAS Y PELICULAS: con el id de las películas de una usuaria. Estamos usando aqui las 3 bases de datos.
 server.get('/user/movies', (req, res) => {
+
     // Preparamos la query para obtener los movieIds
     const movieIdsQuery = dbrelmovusers.prepare(
-      'SELECT movieId FROM rel_movies_users WHERE userId = ?'
-    );
+      'SELECT movieId FROM rel_movies_users WHERE userId = ?');
+
     // Obtenemos el id de la usuaria 
   const userId = req.header('user-id');
+
     // Ejecutamos la query y os devuelve algo como [{ movieId: 1 }, { movieId: 2 }];
   const movieIds = movieIdsQuery.all(userId); 
-  console.log(movieIds);
-
+ 
   //Obtenemos las interrogaciones separadas por comas
   const moviesIdsQuestions = movieIds.map((id) => '?').join(', '); // Que nos devuelve '?, ?'
+
   //Preparamos la segunda query para obtener todos los datos de las peliculas
   const moviesQuery = dbmovies.prepare(
-    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`
-  );
+    `SELECT * FROM movies WHERE id IN (${moviesIdsQuestions})`);
+
   //Convertimos el array de objetos de id anterior a un array de numeros que nos devuelve asi [1.0, 2.0]
   const moviesIdsNumbers = movieIds.map((movie) => movie.movieId);
+
   //Ejecutamos la segunda query
   const movies = moviesQuery.all(moviesIdsNumbers);
 
@@ -140,15 +146,10 @@ server.get('/user/movies', (req, res) => {
   });
 });
 
-//En origen, para crear el MOTOR DE PLANTILLAS, antes tenemos que crear un endpoint para escuchar las peticiones, y cogia los datos de src/data/movies.json:
-// server.get('/movie/:movieId', (req, res) => {
-//   //console.log('URL params:', req.params);
-//   const foundMovie = dataMovies.movies.find((movie) => movie.id === req.params.movieId);
-//   //console.log(foundMovie);
-//   res.render('movie', foundMovie);
-//  });
 
-//AHORA, el MOTOR DE PLANTILLAS, debe obtener los datos de la BASE DE DATOS tambien.
+
+
+//AHORA, el MOTOR DE PLANTILLAS, debe obtener los datos de la BASE DE DATOS también.
 server.get('/movie/:movieId', (req, res) => {
   const query = db.prepare(
     `SELECT  * FROM movies WHERE id=${req.params.movieId}`
@@ -164,17 +165,16 @@ server.get('/movie/:movieId', (req, res) => {
 
 
 
-
 //SERVIDORES DE ESTÁTICOS
 
 //Configuramos el servidor de estáticos de EXPRESS
-const staticServerPathWeb = "./src/public-react"; // En esta carpeta ponemos los ficheros estáticos//
-server.use(express.static(staticServerPathWeb));//
+const staticServerPathWeb = "./src/public-react"; //En esta carpeta ponemos los ficheros estáticos
+server.use(express.static(staticServerPathWeb));
 
 //Configuramos el servidor de estáticos para las FOTOS
-const staticServerPathImages = "./src/public-movies-images"; // En esta carpeta ponemos los ficheros estáticos
+const staticServerPathImages = "./src/public-movies-images"; //En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerPathImages));
 
 //Configuramos el servidor de estáticos para los ESTILOS
-const staticServerStyles = './src/public-css';
+const staticServerStyles = './src/public-css'; //En esta carpeta ponemos los ficheros estáticos
 server.use(express.static(staticServerStyles));
