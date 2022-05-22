@@ -35,7 +35,7 @@ const dbrelmovusers = Database('./src/data/datarelmovusers.db', { verbose: conso
 
 //ENDPOINTS
 
-//ENDPOINT para escuchar las peticiones que acabamos de programar en el front todo ello para obtener las peliculas 
+//ENDPOINT PELICULAS: para escuchar las peticiones que hemos programado en el front todo ello para obtener las peliculas 
 server.get("/movies", (req, res) => {
   const genderFilterParam = req.query.gender ||'';
   const sortFilterParam = req.query.sort || 'asc';
@@ -64,72 +64,31 @@ server.get("/movies", (req, res) => {
 });
   
 
-
-//   const query = dbmovies.prepare('SELECT * FROM movies');
-//   const movies = query.all();
-//   console.log(movies);
-//   return res.json({
-//     success: true,
-//     movies: movies
-//     .filter((item) => item.gender.includes(genderFilterParam))
-//       .sort(function (a, z) {
-//         const sortFilterParam = a.title.localeCompare(z.title);
-//         if (req.query.sort === 'asc') {
-//           return sortFilterParam;
-//         } else {
-//           return sortFilterParam * -1;
-//         }
-//       }),
-//   });
-// });
-  
-  
-//ENDPOINT de las usuarias (de donde cogemos al inicio la info de las usuarias)
-// server.post("/login", (req, res) => {
-//   let exist = users.find((user) => {
-//     if (user.email === req.body.email && user.password === req.body.password) {
-//       return user;
-//     }
-//     return null;
-//   });
-
-//   if (!exist) {
-//     return res.status(404).json({
-//       success: false,
-//       errorMessage: 'Usuaria/o no encontrada/o',
-//     });
-//   }
-//   return res.status(200).json({
-//     success: true,
-//     userId: exist.id,
-//   });
-// });
-
-//Ahora la cogeremos desde la base de datos (previa creación de la tabla de las usuarias) con un SELECT.
-server.post('/login', (req, res) => {
+//ENDPOINT USUARIAS (login): ahora la cogeremos desde la base de datos (previa creación de la tabla de las usuarias) con un SELECT.
+server.post('/login', (req,res) => {
   const emailFind = req.body.email;
   const passwordFind = req.body.password;
-  const query = dbusers.prepare(
-    `SELECT * FROM users WHERE email = ? AND password = ?`
-  );
-  const exist = query.get(emailFind, passwordFind);
 
-  if (exist !== undefined) {
-    return res.status(200).json({
+  const query = dbusers.prepare(`SELECT * FROM users WHERE email = ? AND password =?`);
+
+  const loggedUser = query.get(emailFind, passwordFind);
+
+  if (loggedUser) {
+    res.json ({
       success: true,
-      userId: exist.id,
+      userId: loggedUser.id,
     });
   } else {
-    console.log('Error fatal');
-    return res.status(404).json({
+    res.json ({
       success: false,
       errorMessage: 'Usuaria/o no encontrada/o',
     });
   }
+
 });
 
 
-//Registramos nuevas usuarias en Back y Comprobamos que no hay una usuaria registrada con el mismo email.
+//ENDPOINT USUARIAS(signup): Registramos nuevas usuarias en Back y Comprobamos que no hay una usuaria registrada con el mismo email.
 server.post('/signup', (req, res) => {
   const email = dbusers.prepare(`SELECT email FROM users WHERE email=?`);
   const foundUser = email.get(req.body.email);
@@ -151,7 +110,7 @@ server.post('/signup', (req, res) => {
   }
 });
 
-// Endpoint con el id de las películas de una usuaria
+//ENDPOINT USUARIAS Y PELICULAS: con el id de las películas de una usuaria
 server.get('/user/movies', (req, res) => {
     // Preparamos la query para obtener los movieIds
     const movieIdsQuery = dbrelmovusers.prepare(
